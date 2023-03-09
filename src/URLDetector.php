@@ -95,7 +95,7 @@ class URLDetector {
                 );
         }
 
-        $detect_sitemaps = apply_filters( 'wp2static_detect_sitemaps', 1 );
+        $detect_sitemaps = apply_filters( 'wp2static_detect_sitemaps', 0 );
 
         if ( $detect_sitemaps ) {
             $arrays_to_merge[] = DetectSitemapsURLs::detect( SiteInfo::getURL( 'site' ) );
@@ -137,7 +137,8 @@ class URLDetector {
             $arrays_to_merge[] = DetectPostsPaginationURLs::detect( SiteInfo::getURL( 'site' ) );
         }
 
-        $detect_archives = apply_filters( 'wp2static_detect_archives', 1 );
+        //$detect_archives = apply_filters( 'wp2static_detect_archives', 1 ); //This doesn't work for us
+        $detect_archives = false;
 
         if ( $detect_archives ) {
             $arrays_to_merge[] = DetectArchiveURLs::detect();

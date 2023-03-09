@@ -7,6 +7,7 @@
 
 namespace WP2Static;
 
+use FilesystemIterator;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
@@ -25,7 +26,6 @@ class PostProcessor {
      * Iterates on each file, not directory
      *
      * @param string $static_site_path Static site path
-     * @throws WP2StaticException
      */
     public function processStaticSite(
         string $static_site_path
@@ -45,9 +45,11 @@ class PostProcessor {
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
                 $static_site_path,
-                RecursiveDirectoryIterator::SKIP_DOTS
+                FilesystemIterator::SKIP_DOTS
             )
         );
+
+        $file_processor = new FileProcessor();
 
         foreach ( $iterator as $filename => $file_object ) {
             /**
@@ -60,8 +62,7 @@ class PostProcessor {
             // this allows external processors to have their way with it
             ProcessedSite::add( $filename, $save_path );
 
-            $file_processor = new FileProcessor();
-
+            WsLog::l("Post-processing file: ". $filename);
             $file_processor->processFile( ProcessedSite::getPath() . $save_path );
         }
 

@@ -8,6 +8,7 @@
 
 namespace WP2Static;
 
+use Exception;
 use WP2StaticGuzzleHttp\Client;
 use WP2StaticGuzzleHttp\Psr7\Request;
 use WP2StaticGuzzleHttp\Psr7\Response;
@@ -103,9 +104,12 @@ class Crawler {
         WsLog::l( 'Starting to crawl detected URLs.' );
 
         $site_host = parse_url( $this->site_path, PHP_URL_HOST );
+//        $site_host = "marketing.parserr.com";
         $site_port = parse_url( $this->site_path, PHP_URL_PORT );
         $site_host = $site_port ? $site_host . ":$site_port" : $site_host;
         $site_urls = [ "http://$site_host", "https://$site_host" ];
+
+        WsLog::l( "Site host: " . var_export($site_urls, true));
 
         $use_crawl_cache = CoreOptions::getValue( 'useCrawlCaching' );
 
@@ -124,7 +128,8 @@ class Crawler {
         $urls = [];
 
         foreach ( $crawlable_paths as $root_relative_path ) {
-            $absolute_uri = new URL( $this->site_path . $root_relative_path );
+//            $absolute_uri = new URL( $this->site_path . $root_relative_path );
+            $absolute_uri = new URL( "https://" . $site_host . $root_relative_path );
             $urls[] = [
                 'url' => $absolute_uri->get(),
                 'path' => $root_relative_path,
@@ -132,8 +137,29 @@ class Crawler {
         }
 
         $requests = function ( $urls ) {
+            $headers = [];
+
+            $auth_user = CoreOptions::getValue( 'basicAuthUser' );
+
+            if ( $auth_user ) {
+                $auth_password = CoreOptions::getValue( 'basicAuthPassword' );
+
+                if ( $auth_password ) {
+                    $headers = [
+                        'Authorization' =>
+                            sprintf( 'Basic %s', base64_encode( $auth_user . ':' . $auth_password ) ),
+                    ];
+                }
+            }
             foreach ( $urls as $url ) {
-                yield new Request( 'GET', $url['url'] );
+                $u = $url['url'];
+                WsLog::l( "\t\t\tRequest for URL: ". $u);
+                if(str_contains($u, ".comhttp") ||
+                    str_contains($u, "http/")
+                ){
+                    WsLog::error( 'Malformed url: '. $u);
+                }
+                yield new Request( 'GET', $url['url'],  $headers);
             }
         };
 
@@ -152,6 +178,10 @@ class Crawler {
                     $status_code = $response->getStatusCode();
 
                     $is_cacheable = true;
+                    if ( $status_code === 401 ) {
+                        WsLog::l('401 Unauthorized for URL ' . $root_relative_path);
+                    }
+
                     if ( $status_code === 404 ) {
                         WsLog::l( '404 for URL ' . $root_relative_path );
                         CrawlCache::rmUrl( $root_relative_path );
@@ -210,6 +240,7 @@ class Crawler {
                     }
 
                     $this->crawled++;
+                    WsLog::l("#" . $this->crawled . " out of " . count($urls) . "\tCrawled URL:" . $root_relative_path . " Status code: ". $status_code);
 
                     if ( $crawled_contents && $write_contents ) {
                         $static_path = static::transformPath( $root_relative_path );
@@ -232,7 +263,7 @@ class Crawler {
                         WsLog::l( $notice );
                     }
                 },
-                'rejected' => function ( RequestException $reason, $index ) use ( $urls ) {
+                'rejected' => function ( Exception $reason, $index ) use ( $urls ) {
                     $root_relative_path = $urls[ $index ]['path'];
                     WsLog::l( 'Failed ' . $root_relative_path );
                 },

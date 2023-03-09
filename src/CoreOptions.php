@@ -404,7 +404,9 @@ VALUES (%s, %s, %s);";
 
         $option_value = $wpdb->get_var( $sql );
 
-        if ( ! $option_value || ! is_string( $option_value ) ) {
+        if ( $option_value == null || 
+             $option_value == "" || 
+             ! is_string( $option_value ) ) {
             $option_value = (string) $opt_spec['default_value'];
         }
 

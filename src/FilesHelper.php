@@ -170,6 +170,11 @@ class FilesHelper {
     public static function cleanDetectedURLs( array $urls ) : array {
         $home_url = SiteInfo::getUrl( 'home' );
 
+        if(str_contains($home_url, "https://"))
+            $other_home_url = str_replace("https://", "http://", $home_url);
+        else
+            $other_home_url = str_replace("http://", "https://", $home_url);
+
         if ( ! is_string( $home_url ) ) {
             $err = 'Home URL not defined ';
             WsLog::l( $err );
@@ -178,7 +183,7 @@ class FilesHelper {
 
         $cleaned_urls = array_map(
             // trim hashes/query strings
-            function ( $url ) use ( $home_url ) {
+            function ( $url ) use ( $home_url, $other_home_url ) {
                 if ( ! $url ) {
                     return;
                 }
@@ -187,6 +192,12 @@ class FilesHelper {
                 // 1 x str_replace with search/replace arrays of 2 length
                 $url = str_replace(
                     $home_url,
+                    '/',
+                    $url
+                );
+
+                $url = str_replace(
+                    $other_home_url,
                     '/',
                     $url
                 );

@@ -700,7 +700,7 @@ class CLI {
 
         $msg = preg_replace( '!\s+!', ' ', $msg );
 
-        WP_CLI::line( PHP_EOL . $msg . PHP_EOL );
+        WP_CLI::log( PHP_EOL . $msg . PHP_EOL );
     }
 
     /**

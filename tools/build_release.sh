@@ -30,7 +30,7 @@ mkdir "$TMP_DIR/wp2static"
 # clear dev dependencies
 rm -Rf "$EXEC_DIR/vendor/*"
 # load prod deps and optimize loader
-composer install --quiet --no-dev --optimize-autoloader
+composer install --no-dev --optimize-autoloader
 
 # cp all required sources to build dir
 cp -r "$EXEC_DIR"/src "$TMP_DIR"/wp2static/
@@ -46,12 +46,13 @@ cd "$TMP_DIR" || exit
 find . -type d -exec chmod 755 {} \;
 find . -type f -exec chmod 644 {} \;
 
-zip --quiet -r -9 "./$1.zip" ./wp2static
+zip -r -9 "./$1.zip" ./wp2static
 
 cd - || exit
 
 mkdir -p "$HOME/Downloads/"
 
+echo "copying to $HOME/Downloads/"
 cp "$TMP_DIR/$1.zip" "$HOME/Downloads/"
 
 # reset dev dependencies
@@ -59,4 +60,4 @@ cd "$EXEC_DIR" || exit
 # clear dev dependencies
 rm -Rf "$EXEC_DIR/vendor/*"
 # load prod deps
-composer install --quiet
+composer install
