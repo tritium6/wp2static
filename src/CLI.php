@@ -1031,6 +1031,7 @@ class CLI {
             }
         }
 
+        WP_CLI::log( 'deleting Crawl Cache' );
         Controller::deleteAllCaches();
     }
 
