@@ -104,12 +104,14 @@ class Crawler {
         WsLog::l( 'Starting to crawl detected URLs.' );
 
         $site_host = parse_url( $this->site_path, PHP_URL_HOST );
-//        $site_host = "marketing.parserr.com";
+        //Can be used to crawl remotely
+//       $site_host = "marketing.parserr.com";
         $site_port = parse_url( $this->site_path, PHP_URL_PORT );
         $site_host = $site_port ? $site_host . ":$site_port" : $site_host;
         $site_urls = [ "http://$site_host", "https://$site_host" ];
 
         WsLog::l( "Site host: " . var_export($site_urls, true));
+
 
         $use_crawl_cache = CoreOptions::getValue( 'useCrawlCaching' );
 
