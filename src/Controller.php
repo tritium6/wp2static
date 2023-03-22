@@ -192,6 +192,7 @@ class Controller {
             'logs' => [ ViewRenderer::class, 'renderLogsPage' ],
             'addons' => [ ViewRenderer::class, 'renderAddonsPage' ],
             'advanced' => [ ViewRenderer::class, 'renderAdvancedOptionsPage' ],
+            'parserr' => [ ViewRenderer::class, 'renderParserrPage' ],
         ];
 
         foreach ( $submenu_pages as $slug => $method ) {
@@ -835,6 +836,48 @@ class Controller {
 
         echo $logs;
 
+        wp_die();
+    }
+
+    /**
+     * Parserr clear cache
+     */
+    public static function parserrClear() : void {
+        WsLog::l( 'Starting Parserr clear caches' );
+        check_ajax_referer( 'wp2static-run-page', 'security' );
+        $cmd = "/home/u1613-0nqkrgpvezg4/bin/static-clear-reset-1.sh";
+        WsLog::l("Running script: " . $cmd);
+        $output1 = shell_exec($cmd);
+        echo $output1;
+        WsLog::l( "Completed Parserr clear caches:\n" . $output1 );
+        wp_die();
+    }
+
+    /**
+     * Parserr build cache
+     */
+    public static function parserrBuild() : void {
+        WsLog::l( 'Starting Parserr build static site' );
+        check_ajax_referer( 'wp2static-run-page', 'security' );
+        $cmd = "/home/u1613-0nqkrgpvezg4/bin/static-pull-build-1.sh";
+        WsLog::l("Running script: " . $cmd);
+        $output1 = shell_exec($cmd);
+        echo $output1;
+        WsLog::l( "Completed Parserr build static site:\n"  . $output1 );
+        wp_die();
+    }
+
+    /**
+     * Parserr clear cache
+     */
+    public static function parserrDeploy() : void {
+        WsLog::l( 'Starting Parserr deploy' );
+        check_ajax_referer( 'wp2static-run-page', 'security' );
+        $cmd = "/home/u1613-0nqkrgpvezg4/bin/static-git-commit-push-0.sh";
+        WsLog::l("Running script: " . $cmd);
+        $output1 = shell_exec($cmd);
+        echo $output1;
+        WsLog::l( "Completed Parserr deploy:\n" . $output1 );
         wp_die();
     }
 }

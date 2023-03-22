@@ -62,7 +62,7 @@ class PostProcessor {
             // this allows external processors to have their way with it
             ProcessedSite::add( $filename, $save_path );
 
-            WsLog::l("Post-processing file: ". $filename);
+            //WsLog::l("Post-processing file: ". $filename);    //too noisy
             $file_processor->processFile( ProcessedSite::getPath() . $save_path );
         }
 

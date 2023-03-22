@@ -110,8 +110,18 @@ class WsLog {
         $logs = $wpdb->get_col(
             "SELECT CONCAT_WS(': ', time, log)
             FROM $table_name
+            WHERE auc_wp2static_log.time > (NOW() - INTERVAL 4 HOUR) 
             ORDER BY id DESC"
         );
+
+        if(count($logs) == 0){
+            $logs = $wpdb->get_col(
+                "SELECT CONCAT_WS(': ', time, log)
+            FROM $table_name
+            ORDER BY id DESC
+            LIMIT 5000"
+            );
+        }
 
         $logs = implode( PHP_EOL, $logs );
 

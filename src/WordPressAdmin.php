@@ -312,6 +312,27 @@ class WordPressAdmin {
             0
         );
 
+        add_action(
+            'wp_ajax_parserr_clear',
+            [ Controller::class, 'parserrClear' ],
+            10,
+            0
+        );
+
+        add_action(
+            'wp_ajax_parserr_build',
+            [ Controller::class, 'parserrBuild' ],
+            10,
+            0
+        );
+
+        add_action(
+            'wp_ajax_parserr_deploy',
+            [ Controller::class, 'parserrDeploy' ],
+            10,
+            0
+        );
+
         /*
          * Register actions for when we should invalidate cache for
          * a URL(s) or whole site
