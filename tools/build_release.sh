@@ -28,7 +28,7 @@ rm -Rf "$TMP_DIR/wp2static"
 mkdir "$TMP_DIR/wp2static"
 
 # clear dev dependencies
-rm -Rf "$EXEC_DIR/vendor/*"
+#rm -Rf "$EXEC_DIR/vendor/*"
 # load prod deps and optimize loader
 composer install --no-dev --optimize-autoloader
 
@@ -58,6 +58,11 @@ cp "$TMP_DIR/$1.zip" "$HOME/Downloads/"
 # reset dev dependencies
 cd "$EXEC_DIR" || exit
 # clear dev dependencies
-rm -Rf "$EXEC_DIR/vendor/*"
+#rm -Rf "$EXEC_DIR/vendor/*"
 # load prod deps
 composer install
+
+## todo:
+# ok to skip ::rm -Rf "$EXEC_DIR/vendor/*" as I did above?
+# don't do the lkenght download/install process each time
+# automatically upload the zip to siteground

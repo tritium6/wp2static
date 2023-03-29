@@ -93,7 +93,12 @@ class Crawler {
     public static function wp2staticCrawl( string $static_site_path, string $crawler_slug ) : void {
         if ( 'wp2static' === $crawler_slug ) {
             $crawler = new Crawler();
-            $crawler->crawlSite( $static_site_path );
+            try {
+                $crawler->crawlSite( $static_site_path );
+            } catch (Exception $e) {
+                WsLog::l("Exception during crawl:" . $e);
+            }
+
         }
     }
 
@@ -103,9 +108,9 @@ class Crawler {
     public function crawlSite( string $static_site_path ) : void {
         WsLog::l( 'Starting to crawl detected URLs.' );
 
-        $site_host = parse_url( $this->site_path, PHP_URL_HOST );
         //Can be used to crawl remotely
-//       $site_host = "marketing.parserr.com";
+//        $site_host = "marketing.parserr.com";
+        $site_host = parse_url( $this->site_path, PHP_URL_HOST );
         $site_port = parse_url( $this->site_path, PHP_URL_PORT );
         $site_host = $site_port ? $site_host . ":$site_port" : $site_host;
         $site_urls = [ "http://$site_host", "https://$site_host" ];
@@ -159,7 +164,7 @@ class Crawler {
                 if(str_contains($u, ".comhttp") ||
                     str_contains($u, "http/")
                 ){
-                    WsLog::error( 'Malformed url: '. $u);
+                    WsLog::l( 'Malformed url: '. $u);
                 }
                 yield new Request( 'GET', $url['url'],  $headers);
             }

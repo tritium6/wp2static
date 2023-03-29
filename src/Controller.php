@@ -859,7 +859,7 @@ class Controller {
     public static function parserrBuild() : void {
         WsLog::l( 'Starting Parserr build static site' );
         check_ajax_referer( 'wp2static-run-page', 'security' );
-        $cmd = "/home/u1613-0nqkrgpvezg4/bin/static-pull-build-1.sh";
+        $cmd = "/home/u1613-0nqkrgpvezg4/bin/static-build-1.sh";
         WsLog::l("Running script: " . $cmd);
         $output1 = shell_exec($cmd);
         echo $output1;
